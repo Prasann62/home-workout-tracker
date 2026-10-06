@@ -1,0 +1,110 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace = "com.repai.workoutcounter"
+    compileSdk = rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        applicationId "com.repai.workoutcounter"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 2
+        versionName "1.1"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // ── Locale pruning (AUDIT FIX: resources.arsc size) ─────────
+        // Keep only English. Cuts ~80 AndroidX locale string tables
+        // from resources.arsc — significant size reduction.
+        resConfigs "en", "en-rIN"
+
+        aaptOptions {
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+
+    signingConfigs {
+        release {
+            if (file('repai-release-key.keystore').exists()) {
+                storeFile file('repai-release-key.keystore')
+                storePassword 'repai123'
+                keyAlias 'repai'
+                keyPassword 'repai123'
+                // v2 signing present by default; v3 for future key-rotation:
+                v2SigningEnabled true
+                v3SigningEnabled true
+            } else {
+                // Fallback to debug signing so release APK builds cleanly out-of-the-box
+                initWith debug
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            shrinkResources false
+        }
+
+        release {
+            signingConfig signingConfigs.release
+
+            // ── Size / dead-code removal (AUDIT FIX) ─────────────────
+            // R8 (ProGuard successor) will:
+            //   - Remove all 5,000+ unused library classes (Coroutines debug probes, etc.)
+            //   - Strip DebugProbesKt.bin (coroutines debug metadata)
+            //   - Inline + minify remaining Kotlin/Java code
+            minifyEnabled true
+
+            // Remove unused resources (drawables, layouts, strings from libraries)
+            shrinkResources true
+
+            // Use the optimizing ProGuard profile — more aggressive than
+            // proguard-android.txt, also enables -optimizations
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // ── App Bundle for Play Store (AUDIT RECOMMENDATION) ─────────
+    // When building for Play Store, use Build > Generate Signed Bundle/APK
+    // and choose "Android App Bundle (.aab)". Google will serve per-device
+    // slices and will cut real install size by 20-40%.
+    bundle {
+        language { enableSplit = true }
+        density  { enableSplit = true }
+        abi      { enableSplit = true }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+repositories {
+    flatDir {
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied.")
+}

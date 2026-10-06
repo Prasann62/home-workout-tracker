@@ -1,0 +1,10 @@
+const fs = require('fs');
+let c = fs.readFileSync('src/App.jsx', 'utf8');
+c = c.replace(/import \{ LandmarkSmoother \} from '\.\/utils\/repSmoother\.js';/, `import { LandmarkSmoother } from './utils/repSmoother.js';\nimport { WORKOUT_STATE } from './utils/poseUtils.js';`);
+c = c.replace(/useState\('idle'\)/g, 'useState(WORKOUT_STATE.IDLE)');
+c = c.replace(/setSessionState\('idle'\)/g, 'setSessionState(WORKOUT_STATE.IDLE)');
+c = c.replace(/setSessionState\('active'\)/g, 'setSessionState(WORKOUT_STATE.COUNTING)');
+c = c.replace(/sessionState === 'active'/g, 'sessionState === WORKOUT_STATE.COUNTING');
+c = c.replace(/sessionState !== 'active'/g, 'sessionState !== WORKOUT_STATE.COUNTING');
+fs.writeFileSync('src/App.jsx', c);
+console.log('Done');

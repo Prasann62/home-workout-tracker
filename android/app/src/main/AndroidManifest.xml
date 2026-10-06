@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ILA — AndroidManifest.xml
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:hardwareAccelerated="true">
+        <!--
+            android:hardwareAccelerated="true" — REQUIRED for smooth camera + canvas rendering.
+            Without this, the WebView falls back to software rendering — too slow
+            for real-time MediaPipe pose estimation at 30fps.
+        -->
+
+        <activity
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation|density"
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBarLaunch"
+            android:launchMode="singleTask"
+            android:exported="true"
+            android:screenOrientation="portrait">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+
+    <!-- ── Permissions ──────────────────────────────────────── -->
+
+    <!-- Network: required by Capacitor WebView -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--
+        Camera: REQUIRED for getUserMedia() in the WebView.
+        Capacitor's BridgeWebViewClient handles onPermissionRequest automatically
+        but ONLY if the app holds CAMERA permission at the system level.
+    -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!--
+        AUDIT FIX: changed android:required from "true" to "false".
+        "true" hid the app from devices without a rear camera (some tablets,
+        Chromebooks, emulators). Setting "false" means:
+          - App appears on all devices on Play Store
+          - At runtime, getUserMedia() will fail gracefully on no-camera devices
+          - CameraView.jsx already shows a friendly error for this case
+    -->
+    <uses-feature android:name="android.hardware.camera"          android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.front"     android:required="false" />
+
+    <!-- Vibration: haptic rep feedback -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+</manifest>

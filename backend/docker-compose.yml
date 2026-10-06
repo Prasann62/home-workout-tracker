@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  repai-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: repai-backend
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - API_KEY=repai_secret_key_change_me
+      - DB_PATH=/app/data/repai.db
+      - BACKUP_DIR=/app/backups
+      - AUTO_BACKUP_CRON=true
+    volumes:
+      - repai-data:/app/data
+      - repai-backups:/app/backups
+
+volumes:
+  repai-data:
+    driver: local
+  repai-backups:
+    driver: local

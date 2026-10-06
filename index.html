@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="ILA — Intelligent Lifestyle Athletics. Real-time AI pose coaching for home workouts. No wearables needed." />
+    <title>ILA — Intelligent Lifestyle Athletics</title>
+
+    <!-- Self-hosted fonts — no network required -->
+    <link rel="stylesheet" href="/fonts/fonts.css" />
+
+    <!-- Self-hosted MediaPipe Pose engine -->
+    <script src="/mediapipe/pose/pose.js"></script>
+
+    <link rel="icon" type="image/png" href="/favicon.png" />
+  </head>
+  <body style="background:#0D0D0D;">
+    <div id="root">
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100dvh;background:#0D0D0D;color:#fff;font-family:system-ui,sans-serif;gap:16px;">
+        <img src="/logo.png" width="72" height="72" alt="ILA Logo" style="border-radius:12px;box-shadow:0 8px 24px rgba(255,46,0,0.25);" />
+        <div style="font-size:2rem;font-weight:900;letter-spacing:0.2em;color:#FFFFFF;font-family:sans-serif;">ILA<span style="color:#FF2E00;">.</span></div>
+        <div style="font-size:0.65rem;color:#888;letter-spacing:0.2em;font-weight:700;">LOADING ATHLETICS ENGINE...</div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

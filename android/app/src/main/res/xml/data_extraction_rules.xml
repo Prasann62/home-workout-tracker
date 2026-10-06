@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ILA — Android 12+ (API 31+) Data Extraction Rules
+    Controls what is included in cloud backups AND device-to-device transfers.
+
+    AUDIT FIX: android:allowBackup="false" disables ALL backup globally.
+    This file is still required to be declared; it explicitly marks
+    everything as excluded as a defence-in-depth measure.
+
+    ILA stores only:
+      - localStorage (workout history, personal records, settings)
+    None of this contains sensitive auth tokens or PII, but we exclude
+    it anyway since the data is device-session-specific.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <!-- Exclude all app-private data from Google One / cloud backup -->
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+    </cloud-backup>
+
+    <device-transfer>
+        <!-- Exclude from device-to-device (e.g. Pixel → Pixel) transfer -->
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+    </device-transfer>
+</data-extraction-rules>

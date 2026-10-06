@@ -1,0 +1,29 @@
+{
+  "name": "repai-personal-backend",
+  "version": "1.0.0",
+  "description": "Lightweight personal backend for RepAI workout tracker app",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "test": "ts-node-dev src/tests/api.test.ts"
+  },
+  "keywords": ["workout", "fitness", "backend", "sqlite", "express", "typescript"],
+  "author": "RepAI User",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "uuid": "^11.0.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.7",
+    "@types/uuid": "^10.0.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.3"
+  }
+}
